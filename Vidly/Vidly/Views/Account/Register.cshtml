@@ -1,0 +1,44 @@
+﻿@model Vidly.ViewModel.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Register</h1>
+@using (Html.BeginForm("UserRegister", "Account"))
+{
+    <div class="form-group">
+        @Html.LabelFor(c => c.Name)
+        @Html.TextBoxFor(c => c.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(c => c.Name)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(c => c.Email)
+        @Html.TextBoxFor(c => c.Email, new { @class = "form-control" })
+        @Html.ValidationMessageFor(c => c.Email)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(c => c.Pass)
+        @Html.TextBoxFor(c => c.Pass, new { @class = "form-control" })
+        @Html.ValidationMessageFor(c => c.Pass)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(c => c.ConfirmPass)
+        @Html.TextBoxFor(c => c.ConfirmPass, new { @class = "form-control" })
+        @Html.ValidationMessageFor(c => c.ConfirmPass)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(c => c.Phone)
+        @Html.TextBoxFor(c => c.Phone, new { @class = "form-control" })
+        @Html.ValidationMessageFor(c => c.Phone)
+    </div>
+    @Html.AntiForgeryToken()
+    <button class="btn btn-primary" type="submit">Register</button>
+}
+
+@section Scripts{
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/additional-methods.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

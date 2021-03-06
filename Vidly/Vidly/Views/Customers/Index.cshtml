@@ -1,0 +1,135 @@
+﻿@model IEnumerable<Customer>
+@{
+    ViewData["Title"] = "Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            @if (Model.Count() == 0)
+            {
+                <h2>No Customers Found</h2>
+            }
+            else
+            {
+                <table id="table" class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">MemberShip Type</th>
+                            <th scope="col">Delete</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @*@foreach (Customer cust in @Model)
+                        {
+                            <tr>
+                                <th scope="row">@cust.Id</th>
+                                <td>
+                                    <a asp-controller="Customers" asp-action="CustDetails" asp-route-id="@cust.Id">@cust.Name</a>
+                                </td>
+                                <td>
+                                    <label asp-for="@cust.memberShipType">@cust.memberShipType.Name</label>
+                                </td>
+                            </tr>
+                        }*@
+
+                        
+                    </tbody>
+                </table>
+            }
+
+        </div>
+    </div>
+</div>
+<div id="modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this Movie ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="confirm" class="btn btn-primary">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{ 
+
+    <script>
+
+
+
+        $(document).ready(function () {
+
+            var table = $("#table").DataTable({
+                ajax: {
+                    url: "api/CustomersApi",
+                    dataSrc:""
+                },
+                columns: [
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<th scope='row'>" + data + "</th>"
+                        }
+                    },
+                    {
+                        data: "name"
+                    },
+                    {
+                        data:"memberShipType.name"
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                           return "<button class ='btn btn-danger js-delete' data-Movie-id=" + data + ">Delete</button>";
+                        }
+                    }
+                    
+                ]
+            });
+            var xhr = new XMLHttpRequest();
+            $("#table").on("click", ".js-delete", function () {
+                console.log("hello");
+                $('#modal').modal('toggle');
+                var btn = $(this);
+                var id = btn.attr("data-movie-id");
+                $("#confirm").on("click", function () {
+                    xhr.open("DELETE", "api/CustomersApi/" + id);
+                    xhr.send();
+                });
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == xhr.DONE) {
+                        if (xhr.status == 200) {
+                            table.row(btn.parents("tr")).remove().draw();
+                            $("#modal").modal("hide");
+                        }
+                        else {
+                            $("#modal").modal("hide");
+                            toastr.error("An Unexpected Error Has Occurred");
+                        }
+                    }
+
+                }
+            });
+            
+
+
+
+        });
+
+    </script>
+
+} 

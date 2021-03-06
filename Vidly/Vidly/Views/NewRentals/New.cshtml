@@ -1,0 +1,168 @@
+﻿
+@{
+    ViewData["Title"] = "New Rental";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>New Rental</h1>
+<form id="rentalForm" class="formr">
+    <div class="form-group">
+        <label>Customer</label>
+        <input id="cust" data-rule-validateCustomer="true" name="customer" required type="text" class="form-control" />
+    </div>
+    <div id="custr" class="custr"></div>
+    <ul id="custlist" class="mb-3 list-group"></ul>
+    <div class="form-group">
+        <label>Movie</label>
+        <input data-rule-validateMovie="true" name="movie" id="movieI" type="text" class="form-control" />
+    </div>
+
+    <div id="movier" class="movier"></div>
+    <ul id="movlist" class="mb-3 list-group"></ul>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@section Scripts{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/additional-methods.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        var vm = {
+            CustomerId: "",
+            MoviesId: []
+        }
+        var customer = document.getElementById("cust");
+        var check = true;
+        customer.addEventListener("keyup", function (event) {
+            let text = event.target.value.length;
+
+            if (text >= 3 && check) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "https://localhost:44301/api/CustomersApi?query=" + event.target.value);
+                xhr.send();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == xhr.DONE) {
+                        if (xhr.status == 200) {
+                            var arr = JSON.parse(xhr.responseText);
+                            let custr = document.getElementById("custr");
+                            if (arr.length != 0)
+                                custr.style.visibility = "visible";
+
+
+                            arr.forEach(obj => {
+                                custr.innerHTML += "<a class='suggest' onClick='select(event," + obj.id + ")' value='" + obj.id + "'>" + obj.name + "</a>"
+                            })
+
+                            //check = false;
+
+
+                        }
+                    }
+                }
+            }
+            if (!event.target.value) {
+                check = true;
+                let custr = document.getElementById("custr");
+                custr.innerHTML = "";
+                custr.style.visibility = "hidden";
+            }
+        });
+        function select($event, dd) {
+            let custr = document.getElementById("custr");
+            custr.innerHTML = "";
+            custr.style.visibility = "hidden";
+            let list = document.getElementById("custlist");
+            list.innerHTML = "";
+            let id = dd;
+            let name = $event.target.innerText;
+            document.getElementById("cust").value = name;
+            list.innerHTML += "<li value='" + id + "' class='list-group-item disabled'>" + name + "</li>";
+            vm.CustomerId = id;
+
+        }
+        function select2($event, dd) {
+            let custr = document.getElementById("movier");
+            custr.innerHTML = "";
+            custr.style.visibility = "hidden";
+            let list = document.getElementById("movlist");
+
+            let id = dd;
+            let name = $event.target.innerText;
+            list.innerHTML += "<li value='" + id + "' class='list-group-item disabled'>" + name + "</li>";
+            vm.MoviesId.push(id);
+        }
+        var checks = true;
+        $("#movieI").on("keyup", function (event) {
+
+
+            if (event.target.value.length >= 3 && checks) {
+                $.ajax({
+                    url: "https://localhost:44301/api/Movies?query=" + event.target.value,
+                    success: function (result) {
+
+                        var arr = result;
+                        var movier = document.getElementById("movier");
+                        movier.style.visibility = "visible";
+                        movier.innerHTML = "";
+                        arr.forEach(obj => {
+                            movier.innerHTML += "<a class='suggest' onClick='select2(event," + obj.id + ")' value='" + obj.id + "'>" + obj.name + "</a>"
+                        });
+                        //checks = false;
+                    }
+                });
+            }
+            console.log(event.target.value);
+            if (!event.target.value) {
+                movier.innerHTML = "";
+                movier.style.visibility = "hidden";
+
+                checks = true;
+            }
+        })
+       
+       $(document).ready(function () {
+           console.log("hello");
+
+           $.validator.addMethod("validateMovie", function () {
+               return vm.MoviesId.length > 0;
+           }, "Please select at least one Movie");
+
+           $.validator.addMethod("validateCustomer", function () {
+               return vm.CustomerId && vm.CustomerId > 0;
+           }, "Please enter a valid customer");
+
+           $("#rentalForm").validate({
+               submitHandler: function (e) {
+                   // e.preventDefault();
+                    fetch("https://localhost:44301/api/Rentals", {
+                        method: "POST", body: JSON.stringify(vm), headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => {
+                        toastr.success("New Rental Was added Successfully");
+                        console.log(response);
+                    }).catch(err => toastr.error("An unexpected error has occured"));
+                   return false;
+                }
+            });
+        });
+        document.addEventListener("click", function () {
+
+            let custr = document.getElementById("custr");
+            custr.innerHTML = "";
+            custr.style.visibility = "hidden";
+
+            
+            let movier = document.getElementById("movier");
+            movier.innerHTML = "";
+            movier.style.visibility = "hidden";
+
+
+        });
+                    //$("#rentalForm").on("submit", function (e) {
+
+                    //});
+    </script>
+
+}
