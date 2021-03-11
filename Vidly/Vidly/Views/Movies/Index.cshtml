@@ -90,10 +90,12 @@
                         data: "genre.name",
 
                     },
+                    
                     {
                         data: "id",
                         render: function (data) {
-                            return "<button class ='btn btn-danger js-delete' data-Movie-id=" + data + ">Delete</button>";
+                            return `<button class ='btn btn-danger js-delete' data-Movie-id=${data}>Delete</button>
+                                    <a href="/Movies/Edit/${data}" class ='btn btn-success'>Edit</a>`;
                         }
                     }
                 ]
@@ -105,27 +107,27 @@
                 var btn = $(this);
                 var id = btn.attr("data-movie-id");
                 console.log(btn);
-            $('#confirm').on("click", () => {
-                xhr.open("DELETE", "api/Movies/" + id, true);
-                xhr.send();
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == xhr.DONE) {
-                        if (xhr.status == 200) {
-                            table.row(btn.parents("tr")).remove().draw();
-                            $('#modal').modal('hide');
-                        }
-                        else {
-                            $('#modal').modal('hide');
-
-                            alert("An Error has Occured");
-                        }
-                    }
-                }
-               
-            })
+            
 
         })
+             $('#confirm').on("click", () => {
+                 xhr.open("DELETE", "api/Movies/" + id, true);
+                 xhr.send();
+                 xhr.onreadystatechange = function () {
+                     if (xhr.readyState == xhr.DONE) {
+                         if (xhr.status == 200) {
+                             table.row(btn.parents("tr")).remove().draw();
+                             $('#modal').modal('hide');
+                         }
+                         else {
+                             $('#modal').modal('hide');
 
+                             alert("An Error has Occured");
+                         }
+                     }
+                 }
+
+             })
         })
         
            

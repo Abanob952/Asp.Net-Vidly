@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Vidly.Filters;
 using Vidly.Models;
+using Vidly.ViewModel;
 
 namespace Vidly.Controllers
 {
@@ -33,6 +34,58 @@ namespace Vidly.Controllers
             Customer cust =  customers.Where(x => x.Id == id).Include(c=>c.memberShipType).FirstOrDefault();
             return View(cust);
         }
+        public IActionResult Edit(int ID)
+        {
+            var cust = _context.Customers.SingleOrDefault(c => c.Id == ID);
+            CustomerModel Cm = new CustomerModel();
+            Cm.Id = cust.Id;
+            Cm.Name = cust.Name;
+            Cm.Birthday = cust.Birthday;
+            Cm.IsSubscribedToNewsLetter = cust.IsSubscribedToNewsLetter;
+            Cm.MemberShip = cust.memberShipTypesId;
+            Cm.MemberShipType = _context.MemberShipTypes;
+            return View("Add",Cm);
+        }
+        public IActionResult Add()
+        {
+            CustomerModel Cm = new CustomerModel();
+            Cm.MemberShipType = _context.MemberShipTypes;
+            return View(Cm);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Save(CustomerModel CustMod)
+        {
 
+            if (!ModelState.IsValid)
+            {
+                CustomerModel Cm = new CustomerModel();
+                Cm.MemberShipType = _context.MemberShipTypes;
+                return View("Add",Cm);
+            }
+            else
+            {
+                if (CustMod.Id == 0 || CustMod.Id==null)
+                {
+                    Customer cust = new Customer();
+                    cust.Name = CustMod.Name;
+                    cust.Birthday = CustMod.Birthday;
+                    cust.IsSubscribedToNewsLetter = CustMod.IsSubscribedToNewsLetter;
+                    cust.memberShipTypesId = CustMod.MemberShip;
+                    _context.Customers.Add(cust);
+                }
+                else
+                {
+                    Customer Customer = _context.Customers.SingleOrDefault(c => c.Id == CustMod.Id);
+                    Customer.Name = CustMod.Name;
+                    Customer.Birthday = CustMod.Birthday;
+                    Customer.IsSubscribedToNewsLetter = CustMod.IsSubscribedToNewsLetter;
+                    Customer.memberShipTypesId = CustMod.MemberShip;
+                }
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }

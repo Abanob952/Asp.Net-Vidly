@@ -1,0 +1,46 @@
+﻿@using Vidly.ViewModel
+@model CustomerModel
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (Model.Id == 0 || Model.Id == null)
+{
+    <h1>Add new Customer</h1>
+}
+else
+{
+    <h1>Edit Customer</h1>
+}
+<form asp-controller="Customers" asp-action="Save" method="post">
+
+
+    <div class="form-group">
+        <label asp-for="@Model.Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control"  />
+        @*@Html.TextBoxFor(c => c.Name, new { @class = "form-control" })*@
+        <span asp-validation-for="@Model.Name"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Birthday" class="form-label"></label>
+        <input asp-for="@Model.Birthday" type="date" class="form-control"  />
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.IsSubscribedToNewsLetter" class="form-label"></label>
+        <input asp-for="@Model.IsSubscribedToNewsLetter" type="checkbox" />
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.MemberShip" class="form-label"></label>
+        <select asp-items="@(new SelectList(@Model.MemberShipType,"Id","Name"))" asp-for="@Model.MemberShip" class="form-control">
+        </select>
+    </div>
+    <input type="hidden" asp-for="@Model.Id"  />
+    <button class="btn btn-primary" type="submit">Save</button>
+</form>
+
+@section Scripts{
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/additional-methods.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

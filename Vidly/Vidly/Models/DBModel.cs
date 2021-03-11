@@ -22,6 +22,8 @@ namespace Vidly.Models
         public DbSet<Users> Users { get; set; }
         public DbSet<UserRoles> UserRoles { get; set; }
         public DbSet<Rental> Rentals { get; set; }
+        public DbSet<MemberShipTypes> MemberShipTypes { get; set; }
+
 
 
 

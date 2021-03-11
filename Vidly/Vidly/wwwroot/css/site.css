@@ -89,6 +89,8 @@ body {
     position: absolute;
     background-color: white;
     z-index: 1003;
+    top:90px;
+    
 }
 .movier {
     border: 2px solid black;
@@ -100,9 +102,11 @@ body {
     position: absolute;
     background-color: white;
     z-index: 1003;
+    bottom: -40px;
 }
-.formr{
-    position:relative;
+.formr {
+ 
+    position: relative;
 }
 .suggest{
     min-width:100%;
@@ -112,4 +116,20 @@ body {
 }
 .suggest:hover {
     background-color:deepskyblue;
+}
+.error{
+    margin:0;
+}
+.navbar{
+    background-color:hotpink;
+    color:white;
+}
+.navbar-brand .nav-link{
+    color:white;
+}
+.btn-primary{
+    background-color:dimgrey;
+}
+.nav-link:hover{
+    border-bottom:2px solid white;
 }

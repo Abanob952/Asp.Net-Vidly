@@ -26,18 +26,22 @@ namespace Vidly.Controllers
 
         }
         [HttpPost]
-        public IActionResult Rent(CustomerMovies cm)
+        public IActionResult Rent([FromBody]CustomerMovies vm)
         {
-            foreach(int id in cm.MoviesId)
+            if (vm.MoviesId.Count() == 0)
+                return BadRequest();
+            foreach (int id in vm.MoviesId)
             {
+                
                 Rental rental = new Rental();
-                rental.CustomerId = cm.CustomerId;
+                rental.CustomerId = vm.CustomerId;
                 rental.DateRented = DateTime.Now;
                 rental.MovieId = id;
                 _context.Movies.SingleOrDefault(c => c.Id == id).NumberAvailable--;
                 _context.Rentals.Add(rental);
-                _context.SaveChanges();
+                
             }
+            _context.SaveChanges();
             return Ok();
         }
     }
